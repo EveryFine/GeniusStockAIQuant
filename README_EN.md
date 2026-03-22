@@ -1,0 +1,268 @@
+# GeniusStockAIQuant - A-Share Quantitative Trading System
+
+## 📊 Project Overview
+
+**GeniusStockAIQuant** is an intelligent quantitative trading system based on the Chinese A-Share market. The project leverages existing A-Share stock market data and combines AI programming tools (such as Cursor) to build a multi-strategy stock screening, backtesting, and trading system.
+
+## 🎯 Core Features
+
+### 1. **Intelligent Stock Selection Module**
+- Quantitative indicator-based stock screening framework
+- Support for multiple technical analysis indicator combinations
+- Leading stock identification algorithm
+- Limit-up stock prediction and filtering
+
+### 2. **Backtesting System**
+- Complete historical data backtesting engine
+- Support for multi-strategy parallel backtesting
+- Detailed performance evaluation metrics
+  - Annualized Return
+  - Maximum Drawdown
+  - Sharpe Ratio
+  - Win Rate and Profit/Loss Ratio
+- Real-time trading process visualization
+
+### 3. **Entry/Exit Management**
+- Flexible entry condition settings
+- Dynamic take-profit and stop-loss strategies
+- Risk control and position management
+- Equity curve tracking
+
+### 4. **Multi-Strategy Support**
+
+#### Trend Strategy
+- Mainstream trend identification based on moving averages
+- Support for long-term and mid-term trend analysis
+- Trend reversal signal detection
+
+#### Limit-Up Strategy
+- Limit-up stock prediction
+- Short-term trading opportunities following limit-ups
+- Limit-up probability calculation
+
+#### Leading Stock Strategy
+- Industry leading stock identification
+- Leading stock breakout signals
+- Leading stock premium analysis
+
+## 💻 Technical Architecture
+
+### Technology Stack
+- **Programming Language**: Python 3.8+
+- **Data Processing**: pandas, numpy
+- **Data Source**: Chinese A-Share historical market data
+- **Backtesting Framework**: Custom quantitative engine
+- **Visualization**: matplotlib, plotly
+- **AI Programming Assistant**: Cursor IDE
+
+### Project Structure
+```
+GeniusStockAIQuant/
+├── README.md                 # Project overview
+├── README_CN.md             # Chinese version
+├── README_EN.md             # English version
+├── data/                    # Data directory
+│   ├── raw/                # Raw data
+│   └── processed/          # Processed data
+├── src/                     # Source code
+│   ├── data_loader.py      # Data loading module
+│   ├── strategy/           # Strategy modules
+│   │   ├── trend_strategy.py      # Trend strategy
+│   │   ├── limit_strategy.py      # Limit-up strategy
+│   │   └── leader_strategy.py     # Leading stock strategy
+│   ├── backtest/           # Backtesting engine
+│   │   ├── backtest_engine.py     # Core backtesting engine
+│   │   └── metrics.py             # Performance metrics calculation
+│   ├── stock_selector.py   # Stock selection module
+│   └── utils/              # Utility functions
+├── notebooks/              # Jupyter analysis notebooks
+├── config/                 # Configuration files
+└── requirements.txt        # Project dependencies
+```
+
+## 🚀 Quick Start
+
+### Environment Installation
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate     # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Basic Usage
+
+#### 1. Load Data
+```python
+from src.data_loader import DataLoader
+
+loader = DataLoader()
+# Load historical data for specific stock
+stock_data = loader.load_stock_data(stock_code='000001', start_date='2023-01-01', end_date='2024-12-31')
+```
+
+#### 2. Run Strategy Backtest
+```python
+from src.backtest.backtest_engine import BacktestEngine
+from src.strategy.trend_strategy import TrendStrategy
+
+# Initialize backtesting engine
+engine = BacktestEngine(initial_capital=100000)  # Initial capital: 100,000 CNY
+
+# Load trend strategy
+strategy = TrendStrategy()
+engine.add_strategy(strategy)
+
+# Execute backtest
+results = engine.backtest(stock_data)
+print(results.summary())
+```
+
+#### 3. Perform Stock Selection Analysis
+```python
+from src.stock_selector import StockSelector
+
+selector = StockSelector()
+selected_stocks = selector.select_stocks(
+    method='technical',  # Technical analysis selection
+    date='2024-12-31'
+)
+print(f"Number of selected stocks: {len(selected_stocks)}")
+```
+
+## 📈 Key Performance Indicators
+
+| Metric | Description | Target |
+|--------|-------------|--------|
+| **Annualized Return** | Annual return percentage | > 20% |
+| **Maximum Drawdown** | Maximum loss percentage | < -20% |
+| **Sharpe Ratio** | Risk-adjusted return | > 1.0 |
+| **Win Rate** | Percentage of profitable trades | > 50% |
+| **Profit/Loss Ratio** | Average profit / Average loss | > 1.5 |
+| **Cumulative Return** | Total return percentage | > 100% |
+
+## 🎓 Strategy Details
+
+### Trend Strategy Workflow
+1. **Trend Identification**: Determine main trend using MA20, MA50, MA200 and other moving averages
+2. **Entry Signals**: 
+   - Stock price pulls back to moving average support with small positive candle
+   - Volume complements price action with volume-price synchronization
+3. **Position Management**: 
+   - Set stop-loss below recent lows (typically 2-3%)
+   - Use trailing stop-loss for profit-taking
+4. **Exit Signals**:
+   - Price breaks below key moving average
+   - Stop-loss or take-profit triggered
+   - Pattern breakdown occurs
+
+### Limit-Up Strategy Workflow
+1. **Pre-forecasting**: 
+   - Identify stocks with limit-up potential
+   - Based on technical and sentiment indicators
+2. **Limit-Up Monitoring**: 
+   - Real-time tracking of limit-up stocks
+   - Analyze limit-up strength and sustainability
+3. **Trading Opportunities**:
+   - One-word limit-up: High risk, minimal participation
+   - High-open limit-up: Seek pullback entry opportunities
+   - Auction limit-up: Requires quick response
+
+### Leading Stock Strategy Workflow
+1. **Leading Stock Identification**:
+   - Volume Leadership: Among top trading volume in sector
+   - Gains Leadership: Outperforms sector gains
+   - First Breakout: First to break key resistance levels
+2. **Entry Conditions**:
+   - Breaks above recent highs
+   - Significant volume increase
+   - Strong relative strength indicators
+3. **Holding Strategy**:
+   - Track leading stock movements
+   - Set wider stop-loss
+   - Add positions on trend confirmation
+
+## 📊 Data Requirements
+
+The project requires the following A-Share data:
+- **Daily K-line Data**: Open, close, high, low prices, trading volume, trading amount
+- **Time Range**: Recommend at least 3+ years of historical data for backtest validation
+- **Stock Coverage**: All A-Share stocks or specific sector/style stocks list
+
+## 🔧 Configuration Files
+
+`config/strategy_config.json` - Strategy parameter configuration example:
+```json
+{
+  "trend_strategy": {
+    "ma_periods": [20, 50, 200],
+    "stop_loss_percent": 2.5,
+    "take_profit_percent": 8.0
+  },
+  "limit_strategy": {
+    "prediction_score_threshold": 0.7,
+    "volume_multiplier": 1.5
+  },
+  "leader_strategy": {
+    "industry_rank_threshold": 5,
+    "breakout_ratio": 0.02
+  }
+}
+```
+
+## 📝 Use Cases
+
+1. **Strategy Development**: Rapidly iterate strategy code using Cursor and other AI tools
+2. **Backtest Validation**: Verify strategy effectiveness on historical data
+3. **Parameter Optimization**: Grid search for optimal parameter combinations
+4. **Paper Trading**: Test strategy performance in simulated environment
+5. **Live Trading**: (Use with caution) Trade with proper risk management
+
+## ⚠️ Risk Disclaimer
+
+- **History is not future**: Backtest results do not guarantee future performance
+- **Market Risk**: A-Share market has high volatility requiring risk controls
+- **Model Risk**: Strategies may suffer from overfitting
+- **Execution Risk**: Actual trading may differ due to slippage, fees, etc.
+- **Black Swan Events**: Unexpected events may cause strategy failure
+
+**Recommendations**:
+- Start with small capital for live trading tests
+- Always follow strict risk management rules
+- Regularly evaluate strategy performance
+- Avoid excessive leverage
+
+## 🛠️ Development Tools
+
+- **IDE**: Visual Studio Code + Cursor extension / Cursor IDE
+- **Python Environment**: Python 3.8+
+- **Version Control**: Git
+- **Package Management**: pip + requirements.txt
+
+## 📚 Reference Resources
+
+- [Talib Technical Analysis Library](https://github.com/mrjbq7/ta-lib)
+- [Tushare - Chinese Stock Data](https://tushare.pro/)
+- [Quantitative Trading Basics](https://www.joinquant.com/)
+- [Backtesting Framework Reference](https://github.com/backtrader/backtrader)
+
+## 🤝 Collaboration & Issues
+
+Welcome to submit issues, suggestions, and improvement proposals!
+
+## 📄 License
+
+MIT License
+
+## 📧 Contact
+
+For any questions or collaboration opportunities, please feel free to reach out.
+
+---
+
+**Last Updated**: March 2026
+**Project Status**: In Development
