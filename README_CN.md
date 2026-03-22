@@ -56,28 +56,39 @@
 - **AI编程助手**: Cursor IDE
 
 ### 项目结构
+
+采用 **`src` 布局**：可安装包名为 **`genius_stock_aiquant`**（`pip install -e .` 后可在任意工作目录 `import`）。原始行情等大文件放在 `data/raw`，默认被 `.gitignore` 忽略；回测报表、图表等产物建议写入 `outputs/`。API 密钥等敏感配置请使用环境变量或 `.env`（勿提交仓库）。
+
 ```
 GeniusStockAIQuant/
-├── README.md                 # 项目说明
-├── README_CN.md             # 中文版本
-├── README_EN.md             # 英文版本
-├── data/                    # 数据目录
-│   ├── raw/                # 原始数据
-│   └── processed/          # 处理后的数据
-├── src/                     # 源代码
-│   ├── data_loader.py      # 数据加载模块
-│   ├── strategy/           # 策略模块
-│   │   ├── trend_strategy.py      # 趋势策略
-│   │   ├── limit_strategy.py      # 涨停策略
-│   │   └── leader_strategy.py     # 龙头策略
-│   ├── backtest/           # 回测引擎
-│   │   ├── backtest_engine.py     # 核心回测引擎
-│   │   └── metrics.py             # 性能指标计算
-│   ├── stock_selector.py   # 选股模块
-│   └── utils/              # 工具函数
-├── notebooks/              # Jupyter分析笔记本
-├── config/                 # 配置文件
-└── requirements.txt        # 项目依赖
+├── README.md
+├── README_CN.md
+├── README_EN.md
+├── pyproject.toml           # 项目元数据与依赖（可编辑安装）
+├── requirements.txt         # 运行时依赖（与 pyproject 对齐）
+├── .gitignore
+├── config/                  # 策略与系统参数（示例见 strategy_config.json）
+├── data/
+│   ├── raw/                 # 原始数据（仅目录入库，内容忽略）
+│   └── processed/           # 清洗/特征后的数据
+├── outputs/                 # 回测报告、导出图表等（内容默认忽略）
+├── notebooks/               # Jupyter 探索与分析
+├── scripts/                 # 命令行入口、批处理脚本
+├── src/
+│   └── genius_stock_aiquant/
+│       ├── __init__.py
+│       ├── data_loader.py           # 数据加载
+│       ├── stock_selector.py        # 选股模块
+│       ├── strategy/
+│       │   ├── base.py              # 策略基类与统一接口
+│       │   ├── trend_strategy.py    # 趋势策略
+│       │   ├── limit_strategy.py    # 涨停策略
+│       │   └── leader_strategy.py   # 龙头策略
+│       ├── backtest/
+│       │   ├── backtest_engine.py   # 回测引擎
+│       │   └── metrics.py           # 绩效指标
+│       └── utils/                   # 通用工具
+└── tests/                   # 单元测试与冒烟测试
 ```
 
 ## 🚀 快速开始
@@ -90,25 +101,31 @@ source venv/bin/activate  # Linux/Mac
 # 或
 venv\Scripts\activate     # Windows
 
-# 安装依赖
+# 安装依赖并以可编辑模式安装本包（推荐）
 pip install -r requirements.txt
+pip install -e .
+
+# 开发依赖（可选，用于运行 pytest）
+pip install -e ".[dev]"
 ```
 
 ### 基础使用
 
 #### 1. 数据加载
 ```python
-from src.data_loader import DataLoader
+from genius_stock_aiquant.data_loader import DataLoader
 
 loader = DataLoader()
 # 加载特定股票的历史数据
 stock_data = loader.load_stock_data(stock_code='000001', start_date='2023-01-01', end_date='2024-12-31')
 ```
 
+> 说明：`DataLoader.load_stock_data` 当前为占位实现，需根据你的数据源（如 `data/raw` 下的文件或 Tushare 等）自行补全加载逻辑。
+
 #### 2. 运行策略回测
 ```python
-from src.backtest.backtest_engine import BacktestEngine
-from src.strategy.trend_strategy import TrendStrategy
+from genius_stock_aiquant.backtest.backtest_engine import BacktestEngine
+from genius_stock_aiquant.strategy.trend_strategy import TrendStrategy
 
 # 初始化回测引擎
 engine = BacktestEngine(initial_capital=100000)  # 初始资金10万
@@ -124,7 +141,7 @@ print(results.summary())
 
 #### 3. 进行选股分析
 ```python
-from src.stock_selector import StockSelector
+from genius_stock_aiquant.stock_selector import StockSelector
 
 selector = StockSelector()
 selected_stocks = selector.select_stocks(
@@ -241,7 +258,8 @@ print(f"选中股票数: {len(selected_stocks)}")
 - **IDE**: Visual Studio Code + Cursor插件 / Cursor IDE
 - **Python环境**: Python 3.8+
 - **版本控制**: Git
-- **包管理**: pip + requirements.txt
+- **包管理**: pip + `requirements.txt` + `pyproject.toml`（可编辑安装）
+- **测试**: pytest（安装开发依赖后运行 `pytest`）
 
 ## 📚 参考资源
 

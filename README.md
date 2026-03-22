@@ -26,6 +26,12 @@
 2. **涨停策略** - 涨停板股票预测与交易
 3. **龙头策略** - 行业龙头股突破机会
 
+## 📁 仓库布局 | Repository Layout
+
+代码采用 **`src` 布局**，可安装包为 **`genius_stock_aiquant`**；另含 `data/`（原始与处理后行情）、`outputs/`（回测产出）、`config/`、`notebooks/`、`scripts/`、`tests/` 等。安装与完整目录说明见 **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)**。
+
+The codebase uses the **`src` layout** with installable package **`genius_stock_aiquant`**, plus `data/`, `outputs/`, `config/`, `notebooks/`, `scripts/`, and `tests/`. See **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)** for install steps and the full tree.
+
 ---
 
 详细信息请访问对应版本：

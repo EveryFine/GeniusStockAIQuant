@@ -1,0 +1,15 @@
+{
+  "trend_strategy": {
+    "ma_periods": [20, 50, 200],
+    "stop_loss_percent": 2.5,
+    "take_profit_percent": 8.0
+  },
+  "limit_strategy": {
+    "prediction_score_threshold": 0.7,
+    "volume_multiplier": 1.5
+  },
+  "leader_strategy": {
+    "industry_rank_threshold": 5,
+    "breakout_ratio": 0.02
+  }
+}

@@ -56,28 +56,39 @@
 - **AI Programming Assistant**: Cursor IDE
 
 ### Project Structure
+
+The repo uses the **`src` layout** with installable package **`genius_stock_aiquant`** (after `pip install -e .`, import from any working directory). Large files such as raw quotes live under `data/raw` and are ignored by `.gitignore` by default; backtest reports and charts should go under `outputs/`. Keep secrets (API tokens) in environment variables or `.env` (never commit them).
+
 ```
 GeniusStockAIQuant/
-├── README.md                 # Project overview
-├── README_CN.md             # Chinese version
-├── README_EN.md             # English version
-├── data/                    # Data directory
-│   ├── raw/                # Raw data
-│   └── processed/          # Processed data
-├── src/                     # Source code
-│   ├── data_loader.py      # Data loading module
-│   ├── strategy/           # Strategy modules
-│   │   ├── trend_strategy.py      # Trend strategy
-│   │   ├── limit_strategy.py      # Limit-up strategy
-│   │   └── leader_strategy.py     # Leading stock strategy
-│   ├── backtest/           # Backtesting engine
-│   │   ├── backtest_engine.py     # Core backtesting engine
-│   │   └── metrics.py             # Performance metrics calculation
-│   ├── stock_selector.py   # Stock selection module
-│   └── utils/              # Utility functions
-├── notebooks/              # Jupyter analysis notebooks
-├── config/                 # Configuration files
-└── requirements.txt        # Project dependencies
+├── README.md
+├── README_CN.md
+├── README_EN.md
+├── pyproject.toml           # Metadata and dependencies (editable install)
+├── requirements.txt         # Runtime deps (aligned with pyproject)
+├── .gitignore
+├── config/                  # Strategy and system parameters (see strategy_config.json)
+├── data/
+│   ├── raw/                 # Raw data (directory tracked; contents ignored)
+│   └── processed/           # Cleaned / feature data
+├── outputs/                 # Backtest exports, plots (contents ignored by default)
+├── notebooks/               # Jupyter exploration
+├── scripts/                 # CLI entrypoints and batch jobs
+├── src/
+│   └── genius_stock_aiquant/
+│       ├── __init__.py
+│       ├── data_loader.py           # Data loading
+│       ├── stock_selector.py        # Stock screening
+│       ├── strategy/
+│       │   ├── base.py              # Strategy base / shared interface
+│       │   ├── trend_strategy.py    # Trend strategy
+│       │   ├── limit_strategy.py    # Limit-up strategy
+│       │   └── leader_strategy.py   # Leading stock strategy
+│       ├── backtest/
+│       │   ├── backtest_engine.py   # Backtesting engine
+│       │   └── metrics.py           # Performance metrics
+│       └── utils/                   # Shared helpers
+└── tests/                   # Unit and smoke tests
 ```
 
 ## 🚀 Quick Start
@@ -90,25 +101,31 @@ source venv/bin/activate  # Linux/Mac
 # or
 venv\Scripts\activate     # Windows
 
-# Install dependencies
+# Install dependencies and this package in editable mode (recommended)
 pip install -r requirements.txt
+pip install -e .
+
+# Optional dev dependencies (e.g. pytest)
+pip install -e ".[dev]"
 ```
 
 ### Basic Usage
 
 #### 1. Load Data
 ```python
-from src.data_loader import DataLoader
+from genius_stock_aiquant.data_loader import DataLoader
 
 loader = DataLoader()
 # Load historical data for specific stock
 stock_data = loader.load_stock_data(stock_code='000001', start_date='2023-01-01', end_date='2024-12-31')
 ```
 
+> Note: `DataLoader.load_stock_data` is currently a stub; implement it for your data source (e.g. files under `data/raw` or Tushare).
+
 #### 2. Run Strategy Backtest
 ```python
-from src.backtest.backtest_engine import BacktestEngine
-from src.strategy.trend_strategy import TrendStrategy
+from genius_stock_aiquant.backtest.backtest_engine import BacktestEngine
+from genius_stock_aiquant.strategy.trend_strategy import TrendStrategy
 
 # Initialize backtesting engine
 engine = BacktestEngine(initial_capital=100000)  # Initial capital: 100,000 CNY
@@ -124,7 +141,7 @@ print(results.summary())
 
 #### 3. Perform Stock Selection Analysis
 ```python
-from src.stock_selector import StockSelector
+from genius_stock_aiquant.stock_selector import StockSelector
 
 selector = StockSelector()
 selected_stocks = selector.select_stocks(
@@ -241,7 +258,8 @@ The project requires the following A-Share data:
 - **IDE**: Visual Studio Code + Cursor extension / Cursor IDE
 - **Python Environment**: Python 3.8+
 - **Version Control**: Git
-- **Package Management**: pip + requirements.txt
+- **Package Management**: pip + `requirements.txt` + `pyproject.toml` (editable install)
+- **Testing**: pytest (run `pytest` after installing dev extras)
 
 ## 📚 Reference Resources
 
