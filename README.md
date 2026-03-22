@@ -28,9 +28,9 @@
 
 ## 📁 仓库布局 | Repository Layout
 
-代码采用 **`src` 布局**，可安装包为 **`genius_stock_aiquant`**；另含 `data/`（原始与处理后行情）、`outputs/`（回测产出）、`config/`、`notebooks/`、`scripts/`、`tests/` 等。安装与完整目录说明见 **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)**。
+代码采用 **`src` 布局**，可安装包为 **`genius_stock_aiquant`**；另含 `data/`、`docs/`（如 PostgreSQL 只读用户说明）、`outputs/`、`config/`、`notebooks/`、`scripts/`、`tests/` 等。安装与完整目录说明见 **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)**；PostgreSQL 接入与只读账号见 **[docs/database-postgres.md](docs/database-postgres.md)** / **[docs/database-postgres-en.md](docs/database-postgres-en.md)**。
 
-The codebase uses the **`src` layout** with installable package **`genius_stock_aiquant`**, plus `data/`, `outputs/`, `config/`, `notebooks/`, `scripts/`, and `tests/`. See **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)** for install steps and the full tree.
+The codebase uses the **`src` layout** with installable package **`genius_stock_aiquant`**, plus `data/`, `docs/` (e.g. PostgreSQL read-only user), `outputs/`, `config/`, `notebooks/`, `scripts/`, and `tests/`. See **[README_CN.md](README_CN.md)** / **[README_EN.md](README_EN.md)** for install steps and the full tree. PostgreSQL setup: **[docs/database-postgres-en.md](docs/database-postgres-en.md)**.
 
 ---
 

@@ -50,7 +50,7 @@
 ### 技术栈
 - **编程语言**: Python 3.8+
 - **数据处理**: pandas, numpy
-- **数据源**: 中国A股历史行情数据
+- **数据源**: 中国A股历史行情数据；**PostgreSQL**（`psycopg2-binary`，连接与表映射见 `.env.example`）
 - **回测框架**: 自研量化引擎
 - **可视化**: matplotlib, plotly
 - **AI编程助手**: Cursor IDE
@@ -67,6 +67,7 @@ GeniusStockAIQuant/
 ├── pyproject.toml           # 项目元数据与依赖（可编辑安装）
 ├── requirements.txt         # 运行时依赖（与 pyproject 对齐）
 ├── .gitignore
+├── docs/                    # 补充说明（如 PostgreSQL 只读用户与数据接入）
 ├── config/                  # 策略与系统参数（示例见 strategy_config.json）
 ├── data/
 │   ├── raw/                 # 原始数据（仅目录入库，内容忽略）
@@ -77,7 +78,8 @@ GeniusStockAIQuant/
 ├── src/
 │   └── genius_stock_aiquant/
 │       ├── __init__.py
-│       ├── data_loader.py           # 数据加载
+│       ├── data_loader.py           # 数据加载（默认走 PostgreSQL）
+│       ├── data_sources/            # 数据源（PostgreSQL 等）
 │       ├── stock_selector.py        # 选股模块
 │       ├── strategy/
 │       │   ├── base.py              # 策略基类与统一接口
@@ -116,11 +118,15 @@ pip install -e ".[dev]"
 from genius_stock_aiquant.data_loader import DataLoader
 
 loader = DataLoader()
-# 加载特定股票的历史数据
-stock_data = loader.load_stock_data(stock_code='000001', start_date='2023-01-01', end_date='2024-12-31')
+# 加载特定股票的历史数据（stock_code 需与库中证券代码字段一致，例如 Tushare 风格 000001.SZ）
+stock_data = loader.load_stock_data(
+    stock_code='000001.SZ',
+    start_date='2023-01-01',
+    end_date='2024-12-31',
+)
 ```
 
-> 说明：`DataLoader.load_stock_data` 当前为占位实现，需根据你的数据源（如 `data/raw` 下的文件或 Tushare 等）自行补全加载逻辑。
+> **PostgreSQL**：在运行前配置环境变量（可复制 `.env.example` 为 `.env` 并填写连接信息）。支持 `DATABASE_URL` / `GSAQ_DATABASE_URL`，或 `GSAQ_PG_HOST`、`GSAQ_PG_DB`、`GSAQ_PG_USER` 等。日 K 表名与列名（如 `ts_code`、`trade_date`、`vol`）可通过 `GSAQ_PG_*` 映射到你本地表结构。连通性可执行：`python scripts/ping_db.py`（需已 `pip install -e .`）。均线示例：`python scripts/example_ma_from_db.py`（可用环境变量 `GSAQ_EXAMPLE_CODE` / `GSAQ_EXAMPLE_START` / `GSAQ_EXAMPLE_END` 覆盖示例参数）。**在库中创建只读用户、权限说明与 SQL 模板**见 [docs/database-postgres.md](docs/database-postgres.md)（可执行脚本：[sql/create_readonly_user.sql](sql/create_readonly_user.sql)）。
 
 #### 2. 运行策略回测
 ```python
@@ -206,9 +212,10 @@ print(f"选中股票数: {len(selected_stocks)}")
 ## 📊 数据要求
 
 项目需要以下A股数据：
-- **日K线数据**: 开盘价、收盘价、最高价、最低价、成交量、成交额
+- **日K线数据**: 开盘价、收盘价、最高价、最低价、成交量、成交额（成交额可选）
 - **时间范围**: 建议至少3年以上历史数据用于回测验证
 - **股票覆盖**: 全A股或特定行业/风格的股票列表
+- **PostgreSQL（推荐）**: 本地或其它环境中的 Postgres 存放历史行情时，通过环境变量连接；表至少包含证券代码、交易日期、OHLC、成交量等字段，列名与 `GSAQ_PG_*` 映射一致即可（默认按常见 `ts_code` / `trade_date` / `vol` 等命名）
 
 ## 🔧 配置文件说明
 

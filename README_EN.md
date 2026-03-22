@@ -50,7 +50,7 @@
 ### Technology Stack
 - **Programming Language**: Python 3.8+
 - **Data Processing**: pandas, numpy
-- **Data Source**: Chinese A-Share historical market data
+- **Data Source**: Chinese A-Share historical market data; **PostgreSQL** (`psycopg2-binary`; see `.env.example` for connection and table mapping)
 - **Backtesting Framework**: Custom quantitative engine
 - **Visualization**: matplotlib, plotly
 - **AI Programming Assistant**: Cursor IDE
@@ -67,6 +67,7 @@ GeniusStockAIQuant/
 ├── pyproject.toml           # Metadata and dependencies (editable install)
 ├── requirements.txt         # Runtime deps (aligned with pyproject)
 ├── .gitignore
+├── docs/                    # Extra docs (e.g. PostgreSQL read-only user)
 ├── config/                  # Strategy and system parameters (see strategy_config.json)
 ├── data/
 │   ├── raw/                 # Raw data (directory tracked; contents ignored)
@@ -77,7 +78,8 @@ GeniusStockAIQuant/
 ├── src/
 │   └── genius_stock_aiquant/
 │       ├── __init__.py
-│       ├── data_loader.py           # Data loading
+│       ├── data_loader.py           # Data loading (PostgreSQL by default)
+│       ├── data_sources/            # Data sources (PostgreSQL, etc.)
 │       ├── stock_selector.py        # Stock screening
 │       ├── strategy/
 │       │   ├── base.py              # Strategy base / shared interface
@@ -116,11 +118,15 @@ pip install -e ".[dev]"
 from genius_stock_aiquant.data_loader import DataLoader
 
 loader = DataLoader()
-# Load historical data for specific stock
-stock_data = loader.load_stock_data(stock_code='000001', start_date='2023-01-01', end_date='2024-12-31')
+# Historical bars for one symbol (use the same code format as in your DB, e.g. Tushare-style 000001.SZ)
+stock_data = loader.load_stock_data(
+    stock_code='000001.SZ',
+    start_date='2023-01-01',
+    end_date='2024-12-31',
+)
 ```
 
-> Note: `DataLoader.load_stock_data` is currently a stub; implement it for your data source (e.g. files under `data/raw` or Tushare).
+> **PostgreSQL**: configure environment variables before running (copy `.env.example` to `.env`). Use `DATABASE_URL` / `GSAQ_DATABASE_URL`, or discrete `GSAQ_PG_HOST`, `GSAQ_PG_DB`, `GSAQ_PG_USER`, etc. Map your table/column names (`ts_code`, `trade_date`, `vol`, …) via `GSAQ_PG_*`. Connectivity check: `python scripts/ping_db.py` (after `pip install -e .`). MA example: `python scripts/example_ma_from_db.py` (optional env: `GSAQ_EXAMPLE_CODE`, `GSAQ_EXAMPLE_START`, `GSAQ_EXAMPLE_END`). **Read-only DB user, grants, and SQL** are documented in [docs/database-postgres-en.md](docs/database-postgres-en.md) (script: [sql/create_readonly_user.sql](sql/create_readonly_user.sql)).
 
 #### 2. Run Strategy Backtest
 ```python
@@ -206,9 +212,10 @@ print(f"Number of selected stocks: {len(selected_stocks)}")
 ## 📊 Data Requirements
 
 The project requires the following A-Share data:
-- **Daily K-line Data**: Open, close, high, low prices, trading volume, trading amount
+- **Daily K-line Data**: Open, close, high, low prices, trading volume, trading amount (amount optional)
 - **Time Range**: Recommend at least 3+ years of historical data for backtest validation
 - **Stock Coverage**: All A-Share stocks or specific sector/style stocks list
+- **PostgreSQL (recommended)**: When history lives in Postgres, connect via environment variables; the daily table should include symbol, trade date, OHLC, volume, etc., with column names aligned to `GSAQ_PG_*` defaults (`ts_code`, `trade_date`, `vol`, …) or your mapped names
 
 ## 🔧 Configuration Files
 
