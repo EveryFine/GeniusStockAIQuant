@@ -26,9 +26,9 @@ def run_backtest_example():
     print("=" * 60)
 
     symbols = [
-        "000001.SZ",  # Example: Ping An Bank
-        "000858.SZ",  # Example: Wuliangye
-        "601888.SH",  # Example: China State Construction
+        "sz.000001",  # Example: Ping An Bank
+        "sz.000858",  # Example: Wuliangye
+        "sh.601888",  # Example: China State Construction
     ]
     start_date = "2024-01-01"
     end_date = "2024-12-31"
